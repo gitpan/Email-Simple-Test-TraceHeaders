@@ -1,0 +1,8 @@
+LICENSE
+MANIFEST
+META.json
+Makefile.PL
+README
+dist.ini
+lib/Email/Simple/Test/TraceHeaders.pm
+t/basic.t
