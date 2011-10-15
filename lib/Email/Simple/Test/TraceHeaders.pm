@@ -1,8 +1,9 @@
 use strict;
 use warnings;
 package Email::Simple::Test::TraceHeaders;
-our $VERSION = '0.091700';
-
+{
+  $Email::Simple::Test::TraceHeaders::VERSION = '0.091701';
+}
 # ABSTRACT: generate sample trace headers for testing
 
 use Carp ();
@@ -88,7 +89,6 @@ sub _build_prev {
 1;
 
 __END__
-
 =pod
 
 =head1 NAME
@@ -97,7 +97,7 @@ Email::Simple::Test::TraceHeaders - generate sample trace headers for testing
 
 =head1 VERSION
 
-version 0.091700
+version 0.091701
 
 =head1 METHODS
 
@@ -151,15 +151,14 @@ This helper gets a value from the previous hop.  So, given these hops:
 
 =head1 AUTHOR
 
-  Ricardo Signes <rjbs@cpan.org>
+Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2009 by Ricardo Signes.
+This software is copyright (c) 2011 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
-the same terms as perl itself.
+the same terms as the Perl 5 programming language system itself.
 
-=cut 
-
+=cut
 
