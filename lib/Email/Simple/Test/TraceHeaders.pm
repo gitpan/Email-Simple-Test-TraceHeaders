@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package Email::Simple::Test::TraceHeaders;
 {
-  $Email::Simple::Test::TraceHeaders::VERSION = '0.091701';
+  $Email::Simple::Test::TraceHeaders::VERSION = '0.091702';
 }
 # ABSTRACT: generate sample trace headers for testing
 
@@ -20,8 +20,10 @@ use Sub::Exporter -setup => {
 # For now, we'll only generate one style of Received header: postfix
 # It's what I encounter the most, and it's simple and straightforward.
 # In the future, we'll be flexible, maybe. -- rjbs, 2009-06-19
-my $POSTFIX_FMT = q{from %s (%s [%s]) by %s (Postfix) with ESMTP id %s }
-                . q{for <%s>; %s};
+my %POSTFIX_FMT = (
+  for   => q{from %s (%s [%s]) by %s (Postfix) with ESMTP id %s for <%s>; %s},
+  nofor => q{from %s (%s [%s]) by %s (Postfix) with ESMTP id %s%s; %s},
+);
 
 
 sub trace_headers {
@@ -40,18 +42,24 @@ sub trace_headers {
       }
     }
 
-    push @received, sprintf $POSTFIX_FMT,
+    my $env_to = ref $hop{env_to} ?   $hop{env_to}
+               :     $hop{env_to} ? [ $hop{env_to} ]
+               :                    [              ];
+
+    my $fmt = @$env_to == 1 ? $POSTFIX_FMT{for} : $POSTFIX_FMT{nofor};
+
+    push @received, sprintf $fmt,
       $hop{from_helo},
       $hop{from_rdns},
       $hop{from_ip},
       $hop{by_name}, # by_ip someday?
       $hop{queue_id},
-      $hop{env_to},
+      @$env_to == 1 ? $env_to->[0] : '',
       (Email::Date::Format::email_gmdate($hop{time}) . ' (GMT)');
 
     %last = %hop;
   }
-  
+
   return [ reverse @received ];
 }
 
@@ -89,6 +97,7 @@ sub _build_prev {
 1;
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -97,7 +106,7 @@ Email::Simple::Test::TraceHeaders - generate sample trace headers for testing
 
 =head1 VERSION
 
-version 0.091701
+version 0.091702
 
 =head1 METHODS
 
@@ -155,10 +164,9 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Ricardo Signes.
+This software is copyright (c) 2013 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
